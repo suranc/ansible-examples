@@ -1,5 +1,5 @@
 ---
-  - name: Playbook
+  - name: Deploy Webservers
     hosts: webservers
     become: yes
     become_user: root
@@ -11,4 +11,17 @@
       - name: ensure apache is running
         service:
           name: apache2
+          state: started
+  - name: Deploy Appservers
+    hosts: appservers
+    become: yes
+    become_user: root
+    tasks:
+      - name: ensure tomcat is at the latest version
+        apt:
+          name: tomcat9
+          state: latest
+      - name: ensure tomcat is running
+        service:
+          name: tomcat9
           state: started

@@ -8,6 +8,7 @@
         apt:
           name: apache2
           state: latest
+          update_cache: yes
       - name: ensure apache is running
         service:
           name: apache2
@@ -21,6 +22,7 @@
         apt:
           name: tomcat9
           state: latest
+          update_cache: yes
       - name: ensure tomcat is running
         service:
           name: tomcat9

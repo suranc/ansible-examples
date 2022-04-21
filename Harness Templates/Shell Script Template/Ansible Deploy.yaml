@@ -1,0 +1,41 @@
+harnessApiVersion: '1.0'
+type: SHELL_SCRIPT
+scriptString: |-
+  #!/bin/bash
+
+  export ANSIBLE_HOST_KEY_CHECKING=False
+
+  # Setup working directory #
+  WORKDIR=$(mktemp -d)
+  cd $WORKDIR
+  ####################
+
+  # Setup playbook #######
+  git clone ${repo_name} .
+  echo ${ssh_key} | base64 -d > /tmp/ssh-key.tmp
+  chmod 600 /tmp/ssh-key.tmp
+  echo -e "[${group}]\n${hostname}" > ansible_hosts
+  ####################
+
+  # Run playbook ########
+  ansible-playbook -u ${username} --private-key /tmp/ssh-key.tmp -i ansible_hosts ${playbook_path}
+  ####################
+
+  # Final cleanup ########
+  rm -rf $WORKDIR
+  ####################
+scriptType: BASH
+timeoutMillis: 600000
+variables:
+- description: Git repo URL that contains the playbook
+  name: repo_name
+- description: Relative path from repo root to playbook
+  name: playbook_path
+- description: Hostname to deploy playbook to
+  name: hostname
+- description: Username to use in deploy
+  name: username
+- description: Base64 encoded Private SSH key - make with "cat <key> | base64 -w 0"
+  name: ssh_key
+- description: Group to deploy from playbook
+  name: group

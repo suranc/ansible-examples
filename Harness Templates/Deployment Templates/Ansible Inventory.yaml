@@ -1,0 +1,35 @@
+harnessApiVersion: '1.0'
+type: CUSTOM_DEPLOYMENT_TYPE
+fetchInstanceScript: |-
+  set -ex
+  #
+  # Script is expected to query Infrastructure and dump json
+  # in $INSTANCE_OUTPUT_PATH file path
+  #
+  # Harness is expected to initialize ${INSTANCE_OUTPUT_PATH}
+  # environment variable - a random unique file path on delegate,
+  # so script execution can save the result.
+  #
+  #
+
+  # Setup working directory #
+  TEMPDIR=$(mktemp -d)
+  cd $TEMPDIR
+  ####################
+
+  # Fetch playbook #######
+  git clone ${repo_name} .
+  ####################
+
+  # Output hosts for group from inventory file #
+  ansible-inventory --list -i ${inventory_path} | jq '.${group}.hosts | map({host: .}) | {hosts: .}' > ${INSTANCE_OUTPUT_PATH}
+  ####################
+
+  rm -rf $TEMPDIR
+hostAttributes:
+  hostname: host
+hostObjectArrayPath: hosts
+variables:
+- name: repo_name
+- name: inventory_path
+- name: group

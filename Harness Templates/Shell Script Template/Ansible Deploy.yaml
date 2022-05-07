@@ -18,7 +18,7 @@ scriptString: |-
   ####################
 
   # Run playbook ########
-  ansible-playbook -u ${username} --private-key /tmp/ssh-key.tmp -i ansible_hosts ${playbook_path}
+  ansible-playbook -u ${username} --private-key /tmp/ssh-key.tmp -i ansible_hosts --extra-vars "url=${artifact_url}" ${playbook_path}
   ####################
 
   # Final cleanup ########
@@ -27,6 +27,8 @@ scriptString: |-
 scriptType: BASH
 timeoutMillis: 600000
 variables:
+- description: URL to the Artifact to be deployed (typically you'll pass ${artifact.url} from the service to this)
+  name: artifact_url
 - description: Git repo URL that contains the playbook
   name: repo_name
 - description: Relative path from repo root to playbook
